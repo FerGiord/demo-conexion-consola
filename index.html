@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Interactiva - Conexión Consola</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    #container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('consola.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+    .draggable {
+      position: absolute;
+      width: 60px;
+      cursor: grab;
+    }
+    #mic {
+      top: 80%;
+      left: 10%;
+    }
+    .input {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid #0f0;
+      background: rgba(0, 255, 0, 0.2);
+    }
+    #input1 { top: 25%; left: 15%; }
+    #input2 { top: 25%; left: 25%; }
+    #input3 { top: 25%; left: 35%; }
+
+    #feedback {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <img id="mic" class="draggable" src="mic.png" draggable="true">
+    <div id="input1" class="input" data-channel="1"></div>
+    <div id="input2" class="input" data-channel="2"></div>
+    <div id="input3" class="input" data-channel="3"></div>
+    <div id="feedback"></div>
+    <audio id="audio" src="vocals1.wav"></audio>
+  </div>
+
+  <script>
+    const mic = document.getElementById("mic");
+    const inputs = document.querySelectorAll(".input");
+    const feedback = document.getElementById("feedback");
+    const audio = document.getElementById("audio");
+
+    mic.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("text/plain", "mic");
+    });
+
+    inputs.forEach(input => {
+      input.addEventListener("dragover", e => {
+        e.preventDefault();
+      });
+
+      input.addEventListener("drop", e => {
+        e.preventDefault();
+        const data = e.dataTransfer.getData("text/plain");
+        if (data === "mic") {
+          feedback.style.display = 'block';
+          feedback.style.color = '#0f0';
+          feedback.innerText = `Micrófono conectado al canal ${input.dataset.channel}`;
+          audio.currentTime = 0;
+          audio.play();
+        } else {
+          feedback.style.display = 'block';
+          feedback.style.color = '#f00';
+          feedback.innerText = `Conexión incorrecta`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
